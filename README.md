@@ -1,12 +1,12 @@
-surfacevel2strain/README
-http://code.google.com/p/compearth/source/browse/trunk/surfacevel2strain/README
+surfacevel2strain ("surface velocity to strain")
+contact: Carl Tape, University of Alaska Fairbanks, ctape@alaska.edu
+
+download the zipped file or use this command:  
+git clone --depth=1 https://github.com/carltape/surfacevel2strain
 
 Carl Tape, Pablo Muse, Mark Simons
 
-Please contact Carl Tape (carltape@gi.alaska.edu) with suggestions or corrections.
-
-SURFACEVEL2STRAIN: A Matlab code for a a spherical-wavelet-based estimation of
-velocity fields on the sphere from discrete 3-component (or 2-component) GPS observations.
+A Matlab code for a a spherical-wavelet-based estimation of velocity fields on the sphere from discrete 3-component (or 2-component) GPS observations.
 
 Reference:
 Tape, C., P. Muse, M. Simons, D. Dong, and F. Webb, 2009,
@@ -33,4 +33,4 @@ Matlab toolboxes required:
 
 (In the future it would be nice to eliminate dependencies on other toolboxes.)
 
------------------------------------------------
+https://sites.google.com/alaska.edu/carltape/home/research/strain
