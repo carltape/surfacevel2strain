@@ -1,4 +1,4 @@
-surfacevel2strain ("surface velocity to strain")  
+surfacevel2strain ("surface velocity to strain rate")  
 contact: Carl Tape, University of Alaska Fairbanks, ctape@alaska.edu
 
 download the zipped file or use this command:  
