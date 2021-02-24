@@ -39,7 +39,7 @@ end
 if make_plot
     bar(edges,Nplot,'histc');
     xlim([min(edges) max(edges)]);
-    ylabel(sprintf('%s (N=%i)',xlab,Ntotal));
+    ylabel(sprintf('%s (%i)',xlab,Ntotal));
 
     h = findobj(gca,'Type','patch');
     set(h,'FaceColor',barcolor,'EdgeColor','k');
