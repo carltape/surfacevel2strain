@@ -3,12 +3,14 @@ function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(ropt,d
 %
 % The examples in surfacevel2strain are for the socal REASON velocity field
 % and for a full set of synthetic velocity fields.
-% Arbitrary user-provided input files can also be read (see GENERAL).
+% User-provided input files and geographic ranges can also be read (see GENERAL).
 %
 % INPUT:
-%   ropt        index denoting the region (lat-lon box)
-%   dopt        index denoting the data set
-%   dir_data    directory containing data sets
+%   ropt          index denoting the region (lat-lon box)
+%   dopt          index denoting the data set
+%   dir_data      directory containing data sets
+%   ax1_usr_prov  optional argument for geographic range
+%   
 %
 % OUTPUT:
 %   dlon    longitude of observation
@@ -26,8 +28,8 @@ function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(ropt,d
 % calls platemodel2gps.m, read_gps_3D.m
 % called by surfacevel2strain.m
 %
-% GENERAL:
-% Most general syntax for 3rd party velocity file (not data/examples/):
+% USER-PROVIDED INFORMATION:
+% The generalized syntax for 3rd party velocity file (not part of data/examples/):
 % get_gps_dataset(ropt=-1, dopt=-1, dir_data=filename, ax1=[w e s n])
 % 
 

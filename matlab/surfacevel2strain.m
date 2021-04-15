@@ -104,8 +104,8 @@ if ireg == 1
         % USER INPUT
         %ropt  = input(' Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield, 9=japan): ');
         %dopt  = input(' Type an index corresponding to a v-field dataset (1=REASON, 2=CCMMv1.0, 3=ASIA, 4=japan, etc): ');
-        ropt  = input(' Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield): ');
-        dopt  = input(' Type an index corresponding to a v-field dataset (1=REASON): ');
+        ropt  = input(' Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield, -1=other): ');
+        dopt  = input(' Type an index corresponding to a v-field dataset (1=REASON, -1=other): ');
         sdopt = sprintf('d%2.2i', dopt);
         ax0 = '';   % geographic range, empty default before we find out
         if ropt == -1 && dopt == -1
