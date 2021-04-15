@@ -107,9 +107,15 @@ if ireg == 1
         ropt  = input(' Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield): ');
         dopt  = input(' Type an index corresponding to a v-field dataset (1=REASON): ');
         sdopt = sprintf('d%2.2i', dopt);
+        ax0 = '';   % geographic range, empty default before we find out
+        if ropt == -1 && dopt == -1
+            dir_data = input(' Provide the path to user-defined input file:');
+            ax0 = input(' Provide the desired geographic range, format ''w e s n'':');
+            ax0 = str2num(ax0);
+        end
         
         % KEY COMMAND: get the velocity field (and error estimates)
-        [dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = get_gps_dataset(ropt,dopt,dir_data);
+        [dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = get_gps_dataset(ropt,dopt,dir_data, ax0);
         %[dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = ...
         %    get_gps_dataset_carl(ropt,dopt,dir_data,istore,iplate_model);
     end
@@ -249,6 +255,9 @@ if ireg == 1
     disp(sprintf('   %.2e meters (support of q = %i wavelet) < %.2e meters (2*Lscale)',...
     ang_support_meters(qmin0+1),qmin0,2*Lscale));
     qmin = input([' Type min allowable grid order, qmin >= 0 (try ' num2str(qmin0) '): ']);
+    if qmin == -1
+        qmin = qmin0;  disp(['Using recommended value ' num2str(qmin0) ' as qmin']);
+    end
 
     % user picks the max allowable grid (finest scale basis functions)
     qmax = input(' Type max allowable grid order, qmax: ');
@@ -375,6 +384,10 @@ if ireg == 1
     %qsec = 5;
     qsec  = input([' Enter max q grid for secular field (' ...
         num2str(qmin) ' <= qsec <= ' num2str(qmax) '): ']);
+    if qsec == -1
+        qsec = round(mean([qmin qmax]));
+        disp(['qsec is set to split the difference by default: qsec = ' num2str(qsec)])
+    end
     iqsec = find(qvec == qsec);
     irecs = find(qvec > qsec);
     iqvec = [qvec(1) qvec(end) ; qvec(1) qvec(iqsec) ; [qvec(irecs) qvec(irecs)]];
@@ -536,6 +549,10 @@ if ireg == 1
         disp(sprintf('    OCV lambda = %.3e (index %i)',lamvec(iOCV),iOCV));
         disp(sprintf('    GCV lambda = %.3e (index %i)',lamvec(iGCV),iGCV));
         ilam = input(sprintf('Type an index for lambda (try iOCV = %i): ',iOCV));
+        if ilam == -1
+            ilam = iOCV;
+            disp(['Selecting default suggestion for iOCV: ' num2str(iOCV)]);
+        end
         lam = lamvec(ilam);
         lam0(end) = lam;
 
@@ -793,6 +810,10 @@ if ireg == 1
         disp(sprintf('    OCV lambda = %.3e (index %i)',lamvec(iOCV),iOCV));
         disp(sprintf('    GCV lambda = %.3e (index %i)',lamvec(iGCV),iGCV));
         ilam = input(sprintf('Type an index for lambda (try iOCV = %i): ',iOCV));
+        if ilam == -1
+            ilam = iOCV;
+            disp(['Selecting default suggestion for iOCV: ' num2str(iOCV)]);
+        end
         lam0(kk) = lamvec(ilam);
         
 %         % KEY: select on the basis of the OCV curve, GCV curve, or L curve
@@ -806,7 +827,7 @@ if ireg == 1
     disp('  ');
     disp(' got the regularization parameters (vr, vth, vphi):');
     disp(['    lam0 = ' sprintf('%.2e %.2e %.2e',lam0) ]);
-    error
+    %error
 
     %========================================================
 end  % ireg

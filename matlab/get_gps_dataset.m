@@ -1,10 +1,11 @@
-function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(ropt,dopt,dir_data)
+function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(ropt,dopt,dir_data,ax1_usr_prov)
 %GET_GPS_DATASET load a velocity field for certain points on the sphere
 %
 % The examples in surfacevel2strain are for the socal REASON velocity field
 % and for a full set of synthetic velocity fields.
+% Arbitrary user-provided input files can also be read (see GENERAL).
 %
-% INPUT
+% INPUT:
 %   ropt        index denoting the region (lat-lon box)
 %   dopt        index denoting the data set
 %   dir_data    directory containing data sets
@@ -25,6 +26,10 @@ function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(ropt,d
 % calls platemodel2gps.m, read_gps_3D.m
 % called by surfacevel2strain.m
 %
+% GENERAL:
+% Most general syntax for 3rd party velocity file (not data/examples/):
+% get_gps_dataset(ropt=-1, dopt=-1, dir_data=filename, ax1=[w e s n])
+% 
 
 % GEOGRAPHIC REGION -- USER SHOULD MODIFY THESE REGIONS
 % slabel        label for the region
@@ -41,6 +46,7 @@ switch ropt
     case 8, slabel = 'parkfield'; ax1 = [-121.4 -119.8 35.1 36.5]; irow = 11;
     case 9, slabel = 'japan'; ax1 = [128 147 30 46]; irow = 11;
     case 10, slabel = 'wedge'; ax1 = [-175 -85 -60 60]; irow = 11;
+    case -1, slabel = ''; ax1=ax1_usr_prov; irow = 11;  % general case
 end
 lonmin = ax1(1); lonmax = ax1(2);
 latmin = ax1(3); latmax = ax1(4);
@@ -53,7 +59,7 @@ end
 %------------------------------
 % DATA SET (REAL OR SYNTHETIC) -- USER SHOULD MODIFY THESE
 
-if isempty(find(dopt == [0 1 10:13 20:23 60:63 70:73 80:83]))
+if isempty(find(dopt == [0 1 10:13 20:23 60:63 70:73 80:83 -1]))
     error('check data options (dopt)');
 end
 %if dopt == 0, istore = 0; else istore = 1; end
@@ -64,6 +70,8 @@ if dopt ~= 0   % use specific v-field data (velocities in MM/YR)
     % OBSERVED VELOCITY FIELDS
     if dopt == 1        % NASA REASON dataset (modified in REASON_gps_dat.m)
         filename = [dir_data 'reason_subset_3D.dat'];
+    elseif dopt == -1   % 3rd-party use case, a user-specified input file
+        filename = dir_data;
 
     % SYNTHETIC VELOCITY FIELDS
     %   10 -- strike-slip, uniform field, no errors
