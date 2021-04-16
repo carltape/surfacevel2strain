@@ -216,7 +216,7 @@ end
 % it would be good to improve this.
 if imask == 1
     % KEY COMMAND -- smaller number means larger mask
-    switch floor(dopt/10)
+    switch floor(abs(dopt)/10)
         case 0
             % socal default
             Pcum = 0.30; if qmax == 8, Pcum = 0.45; end
@@ -548,7 +548,7 @@ end
 %cmat = [-1.8 1.8 -7 ; 0 3.6 -7 ; 0 3.6 -7 ; 0 3.6 -7];
 cmat = [-1.5 1.5 -7 ; 0 3 -7 ; 0 3 -7 ; 0 3 -7];  % romania colorscale
 
-switch floor(dopt/10)
+switch floor(abs(dopt)/10)
     case 0
         if qmax > 8, cmat = [-7.5 7.5 -7 ; 0 15 -7 ; 0 15 -7 ; 0 15 -7]; end
         if qmax == 8, cmat = [-1.8 1.8 -7 ; 0 3.6 -7 ; 0 3.6 -7 ; 0 3.6 -7]; end
