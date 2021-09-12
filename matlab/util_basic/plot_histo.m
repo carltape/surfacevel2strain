@@ -11,6 +11,7 @@ function [N,Nplot,centers] = plot_histo(hdat,edges,itype,make_plot)
 % Carl Tape, 1/1/2008
 
 hdat = hdat(:);
+hdat(isnan(hdat)) = [];     % remove NaN values from input data
 barcolor = [1 1 1]*0.8;
 
 % default is to plot the histogram
