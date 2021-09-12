@@ -40,6 +40,9 @@
 %     1 (write) 
 %     0 (fixed plate)
 %
+% (4) SEE BELOW
+% (5) SEE BELOW
+%
 % To calculate surface velocities for points that are outside the plate,
 % e.g., above subducting plates, use platemodel2conv_vel.m.
 % 
@@ -787,6 +790,7 @@ end  % irow
 %==========================================================================
 
 if 0==1
+    % EXAMPLE 4
     % By default, the program will figure out which plate each input point is on,
     % and then it will return the surface velocity. This next example shows
     % how one can get the surface velocity of a point that is outside the
@@ -839,7 +843,37 @@ if 0==1
 % input point (-144.00,   59.00) is (-9.90, -20.67) [22.92 mm/yr] on North_America (na) [morvel_nnr, ifix=99]
 % input point (-150.00,   61.00) is (-8.08, -21.64) [23.10 mm/yr] on North_America (na) [morvel_nnr, ifix=99]
 
+    % EXAMPLE 5
+    % convergence velocity (PA-NA) along the Aleutian trench 
+    clear, clc, close all
+    dlonlat = load('/home/admin/share/datalib/faults/alaska/DGGS2012/aleutian_nodelimit.txt');
+    lon = dlonlat(:,1); lat = dlonlat(:,2);
     
+    imodel = 10; ifix = 13; iplate = 1;     % MORVEL
+    %imodel = 4; ifix = 32; iplate = 37;     % Bird
+    [exyz,names,name_labs,dir_bounds,ssfx,smod] = get_plate_model(imodel,true);
+    opts = {0,1,0,iplate};
+
+    % compute velocity field for VECTORS (coarse mesh)
+    % note: plots a vector field using the quiver command
+    [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
+        = platemodel2gps(lon,lat,imodel,ifix,opts);
+    if 0==1
+        for ii=1:length(lon)
+            if isempty(iplate), ip = iplate_vec(ii); else ip = iplate; end
+            disp(sprintf('input point (%7.2f, %7.2f) is (%.2f, %.2f) [%.2f mm/yr] on %s (%s) [%s, ifix=%i]',...
+                lon(ii),lat(ii),ve(ii),vn(ii),sqrt(ve(ii)^2 + vn(ii)^2),names{ip},name_labs{ip},smod,ifix));
+        end
+    end
+    [th,vmag] = cart2pol(ve,vn);
+    vaz = wrapTo360(-wrapTo360(th*180/pi) + 90);
+    figure; nr=3; nc=1; ii=1;
+    subplot(nr,nc,1); quiver(lon,lat,ve,vn); zlabel('longitude'); grid on;
+    title(sprintf('%s (%s) for %s, ifix=%i [%s]',names{iplate},name_labs{iplate},smod,ifix,name_labs{ifix}),'interpreter','none');
+    subplot(nr,nc,2); plot(lon,vmag); xlabel('longitude'); ylabel('velocity, mm/yr'); grid on;
+    subplot(nr,nc,3); plot(lon,vaz); xlabel('longitude'); ylabel('azimuth, deg [0 = north]'); grid on;
+    %print(gcf,'-dpng',sprintf('~/aleutian_%s',smod));
+
 end
 
 %==========================================================================
