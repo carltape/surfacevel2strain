@@ -46,7 +46,7 @@
 % To calculate surface velocities for points that are outside the plate,
 % e.g., above subducting plates, use platemodel2conv_vel.m.
 % 
-% calls platemodel2gps.m
+   % calls platemodel2gps.m, vmodify.m, write_vel_field.m
 %
 % Carl Tape, 2011-01-28
 %
@@ -114,7 +114,7 @@ disp(sprintf('region %i is for %s: [%.1f %.1f %.1f %.1f]',iregion,slabel,ax1));
 
 iwrite = input(' Type 1 to write files (0 otherwise), then ENTER: ');
 ifig_extra = 0;     % extra figures
-ipick_figs = 0;     % figures of example plate w.r.t. fixed plate
+ipick_figs = 1;     % figures of example plate w.r.t. fixed plate
 ilon360 = 1;        % =1 for longitudes as [0,360], =0 for [-180,180]
 
 stq = sprintf('q%2.2i', q);
@@ -206,7 +206,7 @@ num = length(lat);
 
 if 0==1
     for imodel = 1:7
-        platemodel2gps([],[],imodel,99,{0,1,1});
+        platemodel2gps([],[],imodel,99,{0,0,1});
     end
     disp('displaying euler poles only');
     error
@@ -476,17 +476,19 @@ ifix_morvel = [14 3 4 5 6 7 9 10 11 16 13 1 17 19 20 23 25]';
 % number of options for choosing the fixed plate
 nfix = length(ifix_mat);
 
+for ii=1:nfix, disp(sprintf('%6s %2i %2i %2i %2i %2i %2i %2i %2i -- %2i',sfix_name{ii},ifix_mat(ii,:),ifix_morvel(ii))); end
+
 disp(' ');
 disp('Type 0 to NOT fix a plate, 1 to fix a plate,');
 ifix0 = input('or 2 to consider a range of fixed plates, then ENTER: ');
 if ifix0 > 0
-   disp('Index for fixed plate:');
+   disp('Index for fixed plate [currently not all plates are allowed to be fixed]:');
    for ii=1:nfix, disp(sprintf('%3i %s',ii,sfix_name{ii})); end
    if ifix0 == 1
        ifix0 = input(sprintf('\n Type index of plate (between 1 and %i), then ENTER: ',nfix));
        irow1 = ifix0;
        irow2 = ifix0;
-   else
+   else     % ifix0 = 2
        irow1 = input(sprintf('\n Type index of first fixed plate (between 1 and %i), then ENTER: ',nfix));
        irow2 = input(sprintf('\n Type index of first fixed plate (between %i and %i), then ENTER: ',irow1,nfix));
    end
@@ -509,6 +511,8 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         end
     end
     
+    % options for displaying information on euler vectors
+    % opts = {ifig_extra,idisplay,ieuler_only}
     opts = {0,1,0};
 
     % compute velocity field for VECTORS (coarse mesh)
@@ -539,12 +543,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         
     else
         % kludge for GMT plotting: set near-zero values to <0
-        veps = 1e-4; vmag(vmag < veps) = -veps;
-        % do not plot points that are fixed
-        izero = find(vmag < veps);
-        warning(sprintf('removing %i/%i points with v < %.3e mm/yr',length(izero),num,veps));
-        lon(izero) = []; lat(izero) = []; ve(izero) = []; vn(izero) = []; vmag(izero) = [];
-        num = length(lon);
+        [lon,lat,ve,vn,vmag] = vmodify(lon,lat,ve,vn,vmag);
         
         % output directory
         odir = [dir_plates 'surface_velocities/'];
@@ -557,19 +556,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         ftag = [ftag0 '_' sgrid stq];
         
         % write plate model vector COMPONENTS and MAGNITUDES to file (mm/yr)
-        [~,isort] = sort(vmag);
-        ww = [ftag '_vec.dat'];
-        ofile = [odir ww];
-        disp(['writing file ' ww]);
-        fid = fopen(ofile,'w');
-        for ii=1:num
-            jj = isort(ii);
-            fprintf(fid,'%12.4f%12.4f%12.4f%12.4f%12.4f\n',...
-                lon(jj),lat(jj),ve(jj),vn(jj),vmag(jj));   
-            %fprintf(fid,'%18.8e%18.8e%18.8e%18.8e%18.8e\n',...
-            %    lon(jj),lat(jj),ve(jj),vn(jj),vmag(jj));   
-        end
-        fclose(fid);
+        write_vel_field(odir,ftag,lon,lat,ve,vn,vmag);
         
         % check
         if 0==1
@@ -608,6 +595,33 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         for ii=1:nump, fprintf(fid,'%14.5f %14.5f \n',elon_anti(ii),elat_anti(ii) ); end
         fclose(fid);
         %-------------------------------------
+        
+        if ipick_figs==1
+            % pick a plate for calculating the global velocity field
+            platemodel2gps([],[],imodel,ifix,{0,0,1});
+            ipick = input(sprintf('\n Type index of plate to pick (between 1 and %i), then ENTER: ',nump));
+            if any(ipick,[1:nump])
+                disp('  '); disp([' example plate is ' names{ipick}]);
+
+                % compute global ipick surface velocity
+                evec = exyz(:,ipick);
+                Pxyz = latlon2xyz(lat,lon,earthr);
+                Vrtp = euler2gps(evec, Pxyz);
+                ve_uniform = Vrtp(3,:)';
+                vn_uniform = -Vrtp(2,:)';
+                vmag_uniform = sqrt( ve_uniform.^2 + vn_uniform.^2 );
+
+                % write plate model vector COMPONENTS and MAGNITUDES to file (mm/yr)
+                [lon,lat,ve_uniform,vn_uniform,vmag_uniform] = vmodify(lon,lat,ve_uniform,vn_uniform,vmag_uniform);
+                ftagx = [ftag '_' name_labs{ipick} '_only_global'];
+                write_vel_field(odir,ftagx,lon,lat,ve_uniform,vn_uniform,vmag_uniform);
+                
+                % write a file containing only the points inside the picked plate
+                iinside = find(iplate_vec == ipick);
+                ftagx = [ftag '_' name_labs{ipick} '_only'];
+                write_vel_field(odir,ftagx,lon(iinside),lat(iinside),ve_uniform(iinside),vn_uniform(iinside),vmag_uniform(iinside));
+            end
+        end
         
     end
 
