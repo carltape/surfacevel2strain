@@ -72,7 +72,7 @@ utmstruct = defaultm(utmstruct);
 
 [a,b,c] = size(xi);
 ndim = length(size(xi));
-disp(sprintf('input dimension is %i',ndim));
+%disp(sprintf('input dimension is %i',ndim));
 if ndim==3, xi = xi(:); yi = yi(:); end
 
 if i_type == 1
@@ -86,6 +86,21 @@ if ndim==3, x = reshape(x,a,b,c); y = reshape(y,a,b,c); end
 %------------------------------
 
 if 0==1
+    % the letter of the UTM zone is ONLY relevant in linking the coordinate
+    % system to the northern or southern hemisphere
+    stu = {'6','6C','6D','6M','6N','6S','6V'};
+    for ii=1:length(stu)
+        [xmin,ymin] = utm2ll(-151.2,64,stu{ii},0);
+        disp(sprintf('%2s %10.1f %10.1f',stu{ii},xmin,ymin));
+    end
+    %  6   294682.2  7103782.0
+    % 6C   294682.2 17103782.0
+    % 6D   294682.2 17103782.0
+    % 6M   294682.2 17103782.0
+    % 6N   294682.2  7103782.0
+    % 6S   294682.2  7103782.0
+    % 6V   294682.2  7103782.0
+
     % to view UTM zones using Matlab GUI
     figure;
     axesm utm
