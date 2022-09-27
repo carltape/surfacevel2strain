@@ -35,7 +35,8 @@ dir_plates  = '/home/carltape/gmt/plates/';
 dir_models  = [dir_plates 'plate_models/' smod '/'];
 dir_bounds  = [dir_plates 'plate_boundaries/' sbnd];
 
-% load euler vectors and plate names (these are made in run_platemodel2gps.m)
+% load euler vectors and plate names
+% THE EULER VECTOR FILES ARE CREATED IN run_platemodel2gps.m
 ww = [dir_models smod '_euler_poles.dat'];
 if ~exist(ww,'file'), error('file not found: %s',ww); end
 [wx,wy,wz,name_labs,names] = textread(ww,'%f%f%f%s%s');

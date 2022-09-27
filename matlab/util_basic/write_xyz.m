@@ -3,7 +3,7 @@ function write_xyz(filetag,x,y,z,stfmt)
 
 x = x(:); y = y(:); z = z(:);
 
-filename = [filetag '_xyz.dat'];
+filename = [filetag '_xyz.txt'];
 n = length(x);
 
 disp(sprintf(['write_xyz.m: ' filetag]));

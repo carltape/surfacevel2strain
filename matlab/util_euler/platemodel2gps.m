@@ -40,6 +40,7 @@ function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
 %==============================
 %
 % EXAMPLES:
+%    platemodel2gps([],[],10,ifix,{0,0,1});
 %    [lon,lat] = gridvec(-120,-114,50,32,37); platemodel2gps(lon,lat,2,11,{1,1,0});
 %    [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] = platemodel2gps([],[],2,11,{0,1,1});
 %
@@ -59,7 +60,6 @@ function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
 %
 % Carl Tape, 2006-01-11
 %
-
 
 % constants
 deg = 180/pi;
@@ -93,7 +93,7 @@ end
 nump = length(names);
 
 % display info on euler poles
-if and(idisplay==1, ieuler_only==1)
+if or(idisplay==1, ieuler_only==1)
     
     % convert euler poles (wx,wy,wz) --> (lat,lon,omg)
     outvec1 = euler_convert(exyz,1);
@@ -139,7 +139,7 @@ if ieuler_only==1
     return
 end
 
-%========================================================
+%==========================================================================
 % ASSIGN PLATE INDEX TO EACH GRIDPOINT
 %   In essence, this involves rotating each plate so that its centroid is at
 %   (lat=0, lon=0). The same finite rotation is applied to the test
@@ -212,8 +212,10 @@ for ii = pmin:pmax
     % determine which gridpoints are inside the plate
     % (we assume none of the gridpoints are EXACTLY on the boundaries)
     
-    xv = plon_rot; yv = plat_rot;
-    x = lon_rot; y = lat_rot;
+    xv = plon_rot;
+    yv = plat_rot;
+    x = lon_rot;
+    y = lat_rot;
     in = inpolygon(x,y,xv,yv);          % KEY COMMAND
     
     iplate_vec(in) = ii;
@@ -256,7 +258,7 @@ end
  
 end
 
-%========================================================
+%==========================================================================
 % COMPUTE SURFACE VELOCITY FIELD
 
 disp('platemodel2gps.m: compute surface velocity fields');
