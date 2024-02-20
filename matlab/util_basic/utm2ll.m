@@ -30,6 +30,10 @@ function [x,y] = utm2ll(xi,yi,s_zone,i_type,ellipsoid)
 % Meters, kilometers, or Earth radii (i.e., a unit sphere) are most
 % frequently used. See Functions that Define Ellipsoid Vectors for details.
 %
+% Examples:
+%   spherical Earth: ellipsoid = almanac('earth','sphere','km')
+%   WGS84 Earth:     ellipsoid = almanac('earth','wgs84','km')
+%
 % Carl Tape, 10/2010
 %
 
