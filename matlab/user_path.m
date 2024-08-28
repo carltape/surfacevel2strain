@@ -8,16 +8,9 @@
 % surfacevel2strain.m.
 %
 
-% THIS ASSUMES THAT YOU HAVE compearth IN YOUR HOME DIRECTORY
-% IF IT IS NOT, THEN CHANGE IT.
+% this assumes you have a folder called REPOS that contains surfacevel2strain
 dir_repos = getenv('REPOS');
-dir_compearth = strcat(dir_repos,'/compearth/');
-if ~exist(dir_compearth,'dir')
-    dir_compearth
-    error('user_path.m: compearth directory does not exist: ');
-end
-
-bdir = strcat(dir_compearth,'surfacevel2strain/');
+bdir = strcat(dir_repos,'/surfacevel2strain/');
 bdir_matlab = strcat(bdir,'matlab/');
 
 addpath(strcat(bdir_matlab));

@@ -3,10 +3,10 @@
 #==========================================================
 #  foursub.pl
 #  Carl Tape
-#  
+#
 #  This plots a four-subplot figure like those presented in Tape et al. (GJI 2009).
-#  See /compearth/surfacevel2strain/USER_INFO/surfacevel2strain_manual.pdf
-# 
+#  See surfacevel2strain/USER_INFO/surfacevel2strain_manual.pdf
+#
 #    last tested with GMT v 4.5.3
 #==========================================================
 
@@ -33,7 +33,7 @@ $circleinfo = "-Sc25p -W1.0p,0/0/0,--";
 # USER PARAMETERS
 
 # base directory
-$dir0 = "/home/carltape/REPOSITORIES/compearth/surfacevel2strain";
+$dir0 = "/home/ctape/REPOSITORIES/surfacevel2strain";
 
 # velocity, strain rate, etc
 $vel_dir0 = "$dir0/matlab_output";
